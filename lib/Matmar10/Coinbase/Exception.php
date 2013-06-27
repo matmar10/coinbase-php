@@ -1,6 +1,10 @@
 <?php
 
-class Coinbase_Exception extends Exception
+namespace Matmar10\Coinbase;
+
+use RuntimeException as BaseException;
+
+class Exception extends BaseException
 {
     public function __construct($message, $http_code=null, $response=null)
     {

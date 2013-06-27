@@ -1,6 +1,10 @@
 <?php
 
-class Coinbase_Requestor
+namespace Matmar10\Coinbase;
+
+use Matmar10\Coinbase\ConnectionException;
+
+class Requester
 {
 
     public function doCurlRequest($curl)
@@ -12,14 +16,14 @@ class Coinbase_Requestor
             $error = curl_errno($curl);
             $message = curl_error($curl);
             curl_close($curl);
-            throw new Coinbase_ConnectionException("Network error " . $message . " (" . $error . ")");
+            throw new ConnectionException("Network error " . $message . " (" . $error . ")");
         }
 
         // Check status code
         $statusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         curl_close($curl);
         if($statusCode != 200) {
-            throw new Coinbase_ApiException("Status code " . $statusCode, $statusCode, $response);
+            throw new ConnectionException("Status code " . $statusCode, $statusCode, $response);
         }
 
         return array( "statusCode" => $statusCode, "body" => $response );

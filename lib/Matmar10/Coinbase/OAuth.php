@@ -1,6 +1,10 @@
 <?php
 
-class Coinbase_OAuth
+namespace Matmar10\Coinbase;
+
+use Matmar10\Coinbase\ConnectionException;
+
+class OAuth
 {
     private $_clientId;
     private $_clientSecret;
@@ -65,17 +69,17 @@ class Coinbase_OAuth
             $error = curl_errno($curl);
             $message = curl_error($curl);
             curl_close($curl);
-            throw new Coinbase_ConnectionException("Could not get tokens - network error " . $message . " (" . $error . ")");
+            throw new ConnectionException("Could not get tokens - network error " . $message . " (" . $error . ")");
         }
         if($statusCode !== 200) {
-            throw new Coinbase_ApiException("Could not get tokens - code " . $statusCode, $statusCode, $response);
+            throw new ConnectionException("Could not get tokens - code " . $statusCode, $statusCode, $response);
         }
         curl_close($curl);
 
         try {
             $json = json_decode($response);
         } catch (Exception $e) {
-            throw new Coinbase_ConnectionException("Could not get tokens - JSON error", $statusCode, $response);
+            throw new ConnectionException("Could not get tokens - JSON error", $statusCode, $response);
         }
 
         return array(

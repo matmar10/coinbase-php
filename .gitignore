@@ -1,1 +1,13 @@
+
+# Mac
 .DS_Store
+
+# JetBrains IDE
+.idea/
+
+# generated autoload directory
+vendor/
+
+# composer local install
+composer.phar
+

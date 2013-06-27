@@ -1,14 +1,14 @@
 {
-    "name": "coinbase/coinbase",
-    "description": "Coinbase API library",
-    "keywords": ["bitcoin", "coinbase"],
+    "name": "matmar10/coinbase",
+    "description": "Coinbase API library for PHP >=5.3.3",
+    "keywords": ["bitcoin", "coinbase", "REST", "API", "lib"],
     "homepage": "http://coinbase.com",
     "type": "library",
     "license": "MIT",
     "autoload": {
-        "psr-0": {"Coinbase_": "lib/"}
+        "psr-0": {"Matmar10\\Coinbase": "lib/"}
     },
     "require": {
-        "php": ">=5.2.0"
+        "php": ">=5.3.3"
     }
 }

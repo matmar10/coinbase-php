@@ -1,52 +1,64 @@
 <?php
 
+namespace Matmar10\Coinbase;
+
+use Matmar10\Coinbase\Exception;
+use Matmar10\Coinbase\Requester;
+use Matmar10\Coinbase\Rpc;
+use stdClass;
+
 class Coinbase
 {
     const API_BASE = 'https://coinbase.com/api/v1/';
-    private $_useOauth = false;
-    private $_apiKey = null;
-    private $_oauthObject = null;
-    private $_tokens = null;
-    private $_rpc;
+    private $useOauth = false;
+    private $apiKey = null;
+    private $oauthObject = null;
+    private $tokens = null;
+    private $rpc;
 
-    public function __construct($apiKeyOrOauth, $tokens=null)
+    public function __construct($apiKeyOrOauth, $tokens = null)
     {
-        if($tokens !== null) {
-            $this->useOauth = true;
-            $this->_oauthObject = $apiKeyOrOauth;
-            $this->_tokens = $tokens;
-        } else {
-            $this->_apiKey = $apiKeyOrOauth;
+
+        if(!function_exists('curl_init')) {
+            throw new Exception('The Coinbase client library requires the CURL PHP extension.');
         }
 
-        $this->_rpc = new Coinbase_Rpc(new Coinbase_Requestor(), $this->_apiKey, $this->_oauthObject, $this->_tokens);
+        if($tokens !== null) {
+            $this->useOauth = true;
+            $this->oauthObject = $apiKeyOrOauth;
+            $this->tokens = $tokens;
+        } else {
+            $this->apiKey = $apiKeyOrOauth;
+        }
+
+        $this->rpc = new Rpc(new Requester(), $this->apiKey, $this->oauthObject, $this->tokens);
     }
 
     // Used for unit testing only
-    public function setRequestor($requestor)
+    public function setRequester($requestor)
     {
-        $this->_rpc = new Coinbase_Rpc($requestor, $this->_apiKey, $this->_oauthObject, $this->_tokens);
+        $this->rpc = new Rpc($requestor, $this->apiKey, $this->oauthObject, $this->tokens);
         return $this;
     }
 
     public function get($path, $params=array())
     {
-        return $this->_rpc->request("GET", $path, $params);
+        return $this->rpc->request("GET", $path, $params);
     }
 
     public function post($path, $params=array())
     {
-        return $this->_rpc->request("POST", $path, $params);
+        return $this->rpc->request("POST", $path, $params);
     }
 
     public function delete($path, $params=array())
     {
-        return $this->_rpc->request("DELETE", $path, $params);
+        return $this->rpc->request("DELETE", $path, $params);
     }
 
     public function put($path, $params=array())
     {
-        return $this->_rpc->request("PUT", $path, $params);
+        return $this->rpc->request("PUT", $path, $params);
     }
 
     private function getPaginatedResource($resource, $listElement, $unwrapElement, $page=0, $params=array())

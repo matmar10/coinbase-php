@@ -1,15 +1,21 @@
 <?php
 
-class Coinbase_Rpc
+namespace Matmar10\Coinbase;
+
+use Matmar10\Coinbase\ApiException;
+use Matmar10\Coinbase\ConnectionException;
+use Matmar10\Coinbase\TokensExpiredException;
+
+class Rpc
 {
-    private $_requestor;
+    private $_requester;
     private $_apiKey;
     private $_oauthObject;
     private $_oauthTokens;
 
-    public function __construct($requestor, $apiKey=null, $oauthObject=null, $oauthTokens=null)
+    public function __construct($requester, $apiKey=null, $oauthObject=null, $oauthTokens=null)
     {
-        $this->_requestor = $requestor;
+        $this->_requester = $requester;
         $this->_apiKey = $apiKey;
         $this->_oauthObject = $oauthObject;
         $this->_oauthTokens = $oauthTokens;
@@ -53,7 +59,7 @@ class Coinbase_Rpc
         if($this->_oauthObject !== null) {
             // Use OAuth
             if(time() > $this->_oauthTokens["expire_time"]) {
-                throw new Coinbase_TokensExpiredException("The OAuth tokens are expired. Use refreshTokens to refresh them");
+                throw new TokensExpiredException("The OAuth tokens are expired. Use refreshTokens to refresh them");
             }
 
             $headers[] = 'Authorization: Bearer ' . $this->_oauthTokens["access_token"];
@@ -67,21 +73,21 @@ class Coinbase_Rpc
 
         // Do request
         curl_setopt_array($curl, $curlOpts);
-        $response = $this->_requestor->doCurlRequest($curl);
+        $response = $this->_requester->doCurlRequest($curl);
 
         // Decode response
         try {
             $json = json_decode($response['body']);
         } catch (Exception $e) {
-            throw new Coinbase_ConnectionException("Invalid response body", $response['statusCode'], $response['body']);
+            throw new ConnectionException("Invalid response body", $response['statusCode'], $response['body']);
         }
         if($json === null) {
-            throw new Coinbase_ApiException("Invalid response body", $response['statusCode'], $response['body']);
+            throw new ApiException("Invalid response body", $response['statusCode'], $response['body']);
         }
         if(isset($json->error)) {
-            throw new Coinbase_ApiException($json->error, $response['statusCode'], $response['body']);
+            throw new ApiException($json->error, $response['statusCode'], $response['body']);
         } else if(isset($json->errors)) {
-            throw new Coinbase_ApiException(implode($json->errors, ', '), $response['statusCode'], $response['body']);
+            throw new ApiException(implode($json->errors, ', '), $response['statusCode'], $response['body']);
         }
 
         return $json;
