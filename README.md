@@ -1,4 +1,6 @@
-# Coinbase PHP Client Library
+# Coinbase PHP Client Library 
+
+*NOTE: this is a straight fork of https://github.com/coinbase/coinbase-php with namespace and Psr0 autoload support *
 
 An easy way to buy, send, and accept [bitcoin](http://en.wikipedia.org/wiki/Bitcoin) through the [Coinbase API](https://coinbase.com/docs/api/overview).
 
